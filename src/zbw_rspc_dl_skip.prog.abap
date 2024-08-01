@@ -41,11 +41,20 @@ LOOP AT so_rspc REFERENCE INTO DATA(lr_rspc).
 
       IF lv_logsys = pa_logs.
 
-        DATA(lr_chain) = NEW cl_rspc_chain( i_chain = CONV #( lr_rspc->* ) ).
+        DATA(lr_chain) = NEW cl_rspc_chain( i_chain = lr_rspc->low
+        i_objvers = 'A'
+        i_display_only = abap_true
+        I_FILTER_CLIENT = abap_true
+        i_no_transport = abap_true ).
 
         lr_chain->set_skipped(
           EXPORTING
-            i_s_process     = VALUE #( chain_id = lr_rspc->* type = 'DTP_LOAD' variante =  lr_dtp_rspc->variante )
+            i_s_process     = VALUE #( chain_id = lr_rspc->low
+                                           type = 'DTP_LOAD'
+                                       variante =  lr_dtp_rspc->variante
+                                   eventp_start = lr_dtp_rspc->eventp_start
+                                   event_start  = lr_dtp_rspc->event_start
+                                        )
             i_to_be_skipped = abap_true
         ).
 
@@ -54,8 +63,5 @@ LOOP AT so_rspc REFERENCE INTO DATA(lr_rspc).
     ENDIF.
 
   ENDLOOP.
-
-
-
 
 ENDLOOP.
